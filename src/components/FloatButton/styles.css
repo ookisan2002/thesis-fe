@@ -1,0 +1,16 @@
+#userInfor{
+    display: none;
+}
+
+#userInfor + div{
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(100%);
+    transition: all 0.4s linear;
+}
+
+#userInfor:checked + div{
+    visibility: visible;
+    transform: translateX(0%);
+    opacity: 1;
+}

@@ -1,0 +1,313 @@
+import {type ClassValue, clsx} from 'clsx'
+import {twMerge} from 'tailwind-merge'
+import React from 'react'
+import {toast} from 'sonner'
+import {redirect} from 'next/navigation'
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs))
+}
+
+interface postFetcherProps {
+  url: string
+  data: FormData
+  header?: any
+}
+
+interface getFetcherProps {
+  url: string
+  header?: any
+}
+
+export const getFetcher = async ({url, header = {}}: getFetcherProps) =>
+  await fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...header,
+    },
+  })
+    .then((r: any) => {
+      if (r.status === 404) {
+        const error = new Error(`Not found!! ${r.statusText}`)
+        throw error
+      }
+
+      return r.json()
+    })
+    .catch((error: any) => console.log(error.message))
+
+export const postFetcher = async ({url, data, header = {}}: postFetcherProps) =>
+  await fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...header,
+    },
+    body: JSON.stringify(data),
+  })
+    .then((r: any) => {
+      if (r.status === 404) {
+        const error = new Error(`Not found!! ${r.statusText}`)
+        throw error
+      }
+
+      return r.json()
+    })
+    .catch((error: any) => console.log(error.message))
+
+export function toQueryString(params?: Record<string, any>): string {
+  const queryString = params
+    ? Object.keys(params)
+        .filter(
+          (key) =>
+            params[key] !== undefined &&
+            params[key] !== null &&
+            params[key] !== '',
+        )
+        .map((key) => `${key}=${params[key]}`)
+        .join('&')
+    : ''
+  return `${queryString}`
+}
+
+export function formatDate(dateString: string) {
+  const {format, parseISO} = require('date-fns')
+
+  const date = parseISO(dateString)
+  return format(date, 'dd/MM/yyyy')
+}
+
+export const lineChartOptionsTotalSpent1 = {
+  legend: {
+    show: false,
+  },
+
+  theme: {
+    mode: 'light',
+  },
+  chart: {
+    type: 'line',
+
+    toolbar: {
+      show: false,
+    },
+  },
+
+  dataLabels: {
+    enabled: false,
+  },
+  stroke: {
+    curve: 'smooth',
+  },
+
+  tooltip: {
+    style: {
+      fontSize: '12px',
+      fontFamily: undefined,
+      backgroundColor: '#000000',
+    },
+    theme: 'dark',
+    x: {
+      format: 'dd/MM/yy HH:mm',
+    },
+  },
+  grid: {
+    show: false,
+  },
+  xaxis: {
+    axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false,
+    },
+    labels: {
+      style: {
+        colors: '#A3AED0',
+        fontSize: '12px',
+        fontWeight: '500',
+      },
+    },
+    type: 'text',
+    range: undefined,
+    categories: ['SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB'],
+  },
+
+  yaxis: {
+    show: false,
+    min: 0,
+  },
+}
+
+export const barChartOptionsWeeklyRevenue = {
+  chart: {
+    stacked: true,
+    toolbar: {
+      show: false,
+    },
+  },
+  // colors:['#ff3322','#faf']
+  tooltip: {
+    style: {
+      fontSize: '0.75rem',
+      fontFamily: undefined,
+      backgroundColor: '#000000',
+    },
+    theme: 'dark',
+    onDatasetHover: {
+      style: {
+        fontSize: '0.75rem',
+        fontFamily: undefined,
+      },
+    },
+  },
+  xaxis: {
+    categories: ['17', '18', '19', '20', '21', '22', '23', '24', '25'],
+    show: false,
+    labels: {
+      show: true,
+      style: {
+        colors: '#A3AED0',
+        fontSize: '0.875rem',
+        fontWeight: '500',
+      },
+    },
+    axisBorder: {
+      show: false,
+    },
+    axisTicks: {
+      show: false,
+    },
+  },
+  yaxis: {
+    show: false,
+    color: 'black',
+    labels: {
+      show: false,
+      style: {
+        colors: '#A3AED0',
+        fontSize: '0.875rem',
+        fontWeight: '500',
+      },
+    },
+  },
+
+  grid: {
+    borderColor: 'rgba(163, 174, 208, 0.3)',
+    show: true,
+    yaxis: {
+      lines: {
+        show: false,
+        opacity: 0.5,
+      },
+    },
+    row: {
+      opacity: 0.5,
+    },
+    xaxis: {
+      lines: {
+        show: false,
+      },
+    },
+  },
+  fill: {
+    type: 'solid',
+    colors: ['#5E37FF', '#6AD2FF', '#E1E9F8'],
+  },
+  legend: {
+    show: false,
+  },
+  colors: ['#5E37FF', '#6AD2FF', '#E1E9F8'],
+  dataLabels: {
+    enabled: false,
+  },
+  plotOptions: {
+    bar: {
+      borderRadius: 10,
+      columnWidth: '20px',
+    },
+  },
+}
+
+export const debounce = <T extends (...args: any[]) => any>(
+  fn: T,
+  ms = 300,
+) => {
+  let timeoutId: ReturnType<typeof setTimeout> | null = null
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
+    if (timeoutId) clearTimeout(timeoutId)
+    timeoutId = setTimeout(() => fn.apply(this, args), ms)
+  }
+}
+
+export const renderPagination = function ({
+  totalPages = 10,
+  currentPage = 1,
+  setCurrentPage,
+  paginationControl,
+}: {
+  totalPages: number
+  currentPage: number
+  setCurrentPage: (i: number) => void
+  paginationControl: HTMLElement
+}) {
+  const paginationControls = paginationControl.querySelector(
+    '#pagination-controls',
+  )
+  if (paginationControls) {
+    paginationControls.innerHTML = ''
+    for (let i: number = 1; i <= totalPages; i++) {
+      if (
+        i <= 3 ||
+        i > totalPages - 1 ||
+        (i >= currentPage - 1 && i <= currentPage + 1)
+      ) {
+        const button = document.createElement('button')
+        button.textContent = i + ''
+        button.classList.add('page-btn')
+        button.addEventListener('click', () => {
+          setCurrentPage(i)
+        })
+        if (i === currentPage) {
+          button.classList.add('active')
+        }
+        paginationControls.appendChild(button)
+      } else if (i === 4) {
+        const dot = document.createElement('span')
+        dot.textContent = '...'
+        paginationControls.appendChild(dot)
+      } else if (i === currentPage + 2 && currentPage < totalPages - 1) {
+        const dot = document.createElement('span')
+        dot.textContent = '...'
+        paginationControls.appendChild(dot)
+      }
+    }
+  }
+}
+
+export async function logout() {
+  try {
+    const response = await fetch('/api/logout', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+
+    const payload = await response.json()
+    const data = {
+      status: response.status,
+      payload,
+    }
+
+    if (!response.ok) {
+      throw data
+    }
+
+    window.location.href = '/'
+  } catch (error) {
+    console.error('Logout failed:', error)
+    throw error
+  }
+}

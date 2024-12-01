@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns='http://www.sitemaps.org/schemas/sitemap/0.9'>
+  <sitemap>
+    <loc> https://ducanh-vps.okhub-tech.com/home/sitemap.xml </loc>
+  </sitemap>
+  <sitemap>
+    <loc> https://ducanh-vps.okhub-tech.com/post-detail/sitemap.xml </loc>
+  </sitemap>
+  <sitemap>
+    <loc> https://ducanh-vps.okhub-tech.com/scholarship-site/sitemap.xml </loc>
+  </sitemap>
+  <sitemap>
+    <loc> https://ducanh-vps.okhub-tech.com/lichhoithao-site/sitemap.xml </loc>
+  </sitemap>
+  <sitemap>
+    <loc> https://ducanh-vps.okhub-tech.com/recruitment-site/sitemap.xml </loc>
+  </sitemap>
+  <sitemap>
+    <loc> https://ducanh-vps.okhub-tech.com/immigrant-jobs-site/sitemap.xml </loc>
+  </sitemap>
+</sitemapindex>

@@ -1,0 +1,20 @@
+.mapContainer::after{
+    content: '';
+    width: 20rem;
+    height: 20rem;
+    border: 2px #9DB6A6 solid;
+    animation: scaleFade 2s infinite;
+    background: transparent;
+    border-radius: 9999px;
+}
+
+@keyframes scaleFade {
+    0% {
+      transform: scale(0.1);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(2);
+      opacity: 0; 
+    }
+}
