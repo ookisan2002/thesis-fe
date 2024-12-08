@@ -160,7 +160,26 @@ html {
   border: none;
   border-radius: 0.5rem;
 }
-@media (max-width: 769px) {
+
+@media (max-width: 1024px) and (min-width: 640px){
+  .page-btn {
+    width: 3.5rem;
+    height: 3.5rem;
+    cursor: pointer;
+    user-select: none;
+    color: #262626;
+    font-size: 1.5rem;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 120%; /* 1.05rem */
+    letter-spacing: 0.00875rem;
+  }
+  #pagination-controls span{
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 639px) {
   /* SECTION: phan trang */
   .wrap_pagination_news {
     margin-top: 2rem;

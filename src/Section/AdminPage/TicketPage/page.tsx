@@ -1,32 +1,70 @@
 'use client'
+import {
+  AccountContext,
+  AccountContextType,
+} from '@/components/ContextProvider/page'
+import {CustomeTicketCard} from '@/components/CustomeCard/page'
 import {Button} from '@/components/ui/button'
 import {Calendar} from '@/components/ui/calendar'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
 import {carFilterParams, ticketFilterParams} from '@/lib/constants'
-import {renderPagination} from '@/lib/utils'
-import {addDays, format} from 'date-fns'
-import {CalendarIcon, Car, DollarSign, Mail, Tag, User} from 'lucide-react'
-import React, {useEffect, useRef, useState} from 'react'
+import {env} from '@/lib/environment'
+import {
+  debounce,
+  formatDate,
+  formatDateToTimeStamp,
+  getFetcher,
+  renderPagination,
+  toQueryString,
+} from '@/lib/utils'
+import { format} from 'date-fns'
+import {CalendarIcon} from 'lucide-react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import {DateRange} from 'react-day-picker'
+import useSWRMutation from 'swr/mutation'
 
 export default function TicketTableSection({ticketList}: any) {
   const pagination = useRef(null)
+  const context = useContext(AccountContext)
+  const {value}: AccountContextType = context
   const [userCarList, setUserCarList] = useState(ticketList?.items)
   const [filterParams, setFilterParams] = useState<ticketFilterParams>({
     code: '',
     email: '',
-    page: 1,
-    size: 3,
+    page: ticketList?.currentPage || 1,
+    size: 9,
     dateRange: {
       from: undefined,
       to: undefined,
-    }
+    },
   })
+
+  const {data, trigger, isMutating} = useSWRMutation(
+    `${env.API}/ticket?${toQueryString({
+      code: filterParams.code,
+      email: filterParams.email,
+      page: filterParams.page,
+      size: 9,
+      startDate: formatDateToTimeStamp(filterParams.dateRange?.from),
+      endDate: formatDateToTimeStamp(filterParams.dateRange?.to),
+    })}`,
+    (url: string) =>
+      getFetcher({
+        url: url,
+        header: {
+          Authorization: `Bearer ${value.token}`,
+        },
+      }),
+  )
+
+  useEffect(() => {
+    if (data) setUserCarList(data?.data?.items)
+  }, [data])
 
   useEffect(() => {
     if (pagination.current)
       renderPagination({
-        totalPages: 10,
+        totalPages: ticketList?.totalPage || 10,
         currentPage: filterParams.page,
         setCurrentPage: (i: number) => {
           setFilterParams((prevParams) => ({
@@ -37,13 +75,19 @@ export default function TicketTableSection({ticketList}: any) {
         paginationControl: pagination.current,
       })
   }, [filterParams.page])
+
+  useEffect(() => {
+    const debouncedTrigger = setTimeout(() => {trigger()}, 300)
+    return () => clearTimeout(debouncedTrigger)
+  }, [filterParams])
+
   return (
     <section className='w-full'>
-      <div className='flex my-[2.5rem]'>
+      <div className='flex my-[2.5rem] flex-wrap'>
         <div className='w-fit flex flex-col'>
           <label
             htmlFor='plate'
-            className='text-[1rem] text-black leading-[150%] font-bold'
+            className='text-[1rem] tablet:text-[2rem] text-black leading-[150%] font-bold'
           >
             Biển số
           </label>
@@ -51,33 +95,39 @@ export default function TicketTableSection({ticketList}: any) {
             type='text'
             id='plate'
             placeholder='12A-12345'
-            // onChange={(e) =>
-            //   setFilterParams((prevParams) => ({
-            //     ...prevParams,
-            //     code: e.target.value,
-            //   }))
-            // }
-            className='mt-[0.75rem] w-[13rem] h-[2.75rem] shadow-[0px_1px_50px_0px_rgba(0,0,0,0.08)] rounded-[0.5rem] text-[1rem] text-[#444] leading-[170%] font-medium p-[0.5rem_1.94rem]'
+            onChange={(e) =>
+              setFilterParams((prevParams) => ({
+                ...prevParams,
+                code: e.target.value,
+              }))
+            }
+            className='mt-[0.75rem] w-[13rem] h-[2.75rem] tablet:w-fit tablet:h-20 shadow-[0px_1px_50px_0px_rgba(0,0,0,0.08)] rounded-[0.5rem] text-[1rem] tablet:text-[2rem] text-[#444] leading-[170%] font-medium p-[0.5rem_1.94rem]'
           />
         </div>
-        <div className='mx-[1.5625rem] w-fit flex flex-col'>
+        <div className='mx-[1.5625rem] xsm:m-[1rem_0] w-fit flex flex-col'>
           <label
             htmlFor='owner'
-            className='text-[1rem] text-black leading-[150%] font-bold'
+            className='text-[1rem] tablet:text-[2rem] text-black leading-[150%] font-bold'
           >
             Chủ xe
           </label>
           <input
             type='email'
             id='owner'
+            onChange={(e) =>
+              setFilterParams((prevParams) => ({
+                ...prevParams,
+                email: e.target.value,
+              }))
+            }
             placeholder='abc@gmail.com'
-            className='mt-[0.75rem] w-[13rem] h-[2.75rem] shadow-[0px_1px_50px_0px_rgba(0,0,0,0.08)] rounded-[0.5rem] text-[1rem] text-[#444] leading-[170%] font-medium p-[0.5rem_1.94rem]'
+            className='mt-[0.75rem] w-[13rem] h-[2.75rem] tablet:w-fit tablet:h-20 shadow-[0px_1px_50px_0px_rgba(0,0,0,0.08)] rounded-[0.5rem] text-[1rem] tablet:text-[2rem] text-[#444] leading-[170%] font-medium p-[0.5rem_1.94rem]'
           />
         </div>
         <div className='w-fit flex flex-col'>
           <label
             htmlFor='carName'
-            className='text-[1rem] text-black leading-[150%] font-bold'
+            className='text-[1rem] tablet:text-[2rem] text-black leading-[150%] font-bold'
           >
             Ngày mua
           </label>
@@ -87,10 +137,10 @@ export default function TicketTableSection({ticketList}: any) {
                 id='date'
                 variant={'outline'}
                 className={
-                  'mt-[0.75rem] bg-[#f4f7fe] w-fit h-[2.75rem] shadow-[0px_1px_50px_0px_rgba(0,0,0,0.08)] rounded-[0.5rem] text-[1rem] text-[#444] leading-[170%] font-medium p-[0.5rem_1.94rem]'
+                  'mt-[0.75rem] bg-[#f4f7fe] w-fit h-[2.75rem] tablet:w-fit tablet:h-20 shadow-[0px_1px_50px_0px_rgba(0,0,0,0.08)] rounded-[0.5rem] text-[1rem] tablet:text-[2rem] text-[#444] leading-[170%] font-medium p-[0.5rem_1.94rem]'
                 }
               >
-                <CalendarIcon className='[&_*]:stroke-[#aaa]'/>
+                <CalendarIcon className='[&_*]:stroke-[#aaa] tablet:!size-8' />
                 {filterParams?.dateRange?.from ? (
                   filterParams?.dateRange.to ? (
                     <>
@@ -114,53 +164,28 @@ export default function TicketTableSection({ticketList}: any) {
                 mode='range'
                 defaultMonth={new Date()}
                 selected={filterParams?.dateRange}
-                onSelect={(e: DateRange | undefined)=>{setFilterParams((prevParams) => ({
-                  ...prevParams,
-                  dateRange: e,
-                }))}}
+                onSelect={(e: DateRange | undefined) => {
+                  setFilterParams((prevParams) => ({
+                    ...prevParams,
+                    dateRange: e,
+                  }))
+                }}
                 numberOfMonths={2}
               />
             </PopoverContent>
           </Popover>
         </div>
       </div>
-      <div className='grid grid-cols-3 gap-2'>
-        {[1, 2, 3, 4, 5, 6, 8, 9].map((it, i: number) => (
-          <div
-            key={i}
-            className='p-[1.88rem] h-[19.5625rem] bg-white shadow-[6px_0px_39.768px_0px_rgba(0,0,0,0.05)] rounded-[0.9375rem]'
-          >
-            <h5 className='text-[1.25rem] font-semibold leading-[150%] mb-[2.06rem]'>
-              12B-122345
-            </h5>
-            <div className='flex'>
-              <DollarSign className='[&_*]:stroke-primary size-[1.375rem] mr-[0.75rem]' />
-              <p className='text-[0.9375rem] leading-[160%] font-normal text-[#444]'>
-                Giá: $123
-              </p>
-            </div>
-            <div className='flex my-[0.62rem]'>
-              <Tag className='[&_*]:stroke-primary size-[1.375rem] mr-[0.75rem]' />
-              <p className='text-[0.9375rem] leading-[160%] font-normal text-[#444]'>
-                Loại vé: Tháng
-              </p>
-            </div>
-            <div className='flex'>
-              <Mail className='[&_*]:stroke-primary size-[1.375rem] mr-[0.75rem]' />
-              <p className='text-[0.9375rem] leading-[160%] font-normal text-[#444]'>
-                Email: dai@123gmai.com
-              </p>
-            </div>
-            <div className='w-full flex justify-between pt-[1.37rem] mt-[1.31rem] border-t-[0.04375rem] border-t-[#44444480]'>
-              <p className='text-[#828282] text-[0.9375rem] leading-[160%] font-semibold'>
-                Ngày đăng kí: <br />
-                6/7/2023
-              </p>
-              <button className='size-[3.4375rem] bg-[#444] text-white flex justify-center items-center rounded-full leading-[160%] text-[0.75rem] font-normal'>
-                Chi tiết
-              </button>
-            </div>
-          </div>
+      <div className='grid grid-cols-3 gap-2 tablet:gap-6 xsm:grid-cols-1 tablet:grid-cols-2'>
+        {userCarList?.map((it:any) => (
+          <CustomeTicketCard
+            title={it?.code}
+            desRow1={`Giá: $${it?.price || 0}`}
+            desRow2={`Loại vé: ${it?.car?.ticketType?.name}`}
+            desRow3={`Email: ${it?.user?.email}`}
+            subDes={formatDate(it?.createdAt)}
+            key={it?.id}
+          />
         ))}
       </div>
       <div

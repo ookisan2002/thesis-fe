@@ -13,13 +13,7 @@ export default async function TicketPage() {
   const token = cookieStore.get('token')
   const [ticketList] = await Promise.all([
     getData({
-      api: `/car?${queryString}`,
-      option: {
-        Authorization: `Bearer ${token?.value}`,
-      },
-    }),
-    getData({
-      api: '/statistics/spending',
+      api: `/ticket?${queryString}`,
       option: {
         Authorization: `Bearer ${token?.value}`,
       },

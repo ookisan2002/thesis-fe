@@ -1,31 +1,16 @@
-import Card from '@/components/Card/page'
+'use client'
+
+import { AccountContext, AccountContextType } from '@/components/ContextProvider/page'
 import Widget from '@/components/Widget/page'
+import { env } from '@/lib/environment'
 import CarParkHistoryTable from '@/Section/AdminPage/CarParkPage/CarParkHistory/page'
 import CarParkInforTable from '@/Section/AdminPage/CarParkPage/CarParkInforTable/page'
 import {CircleParking, CircleParkingOff} from 'lucide-react'
-import React from 'react'
+import React, {useContext, useEffect} from 'react'
 
 export default function CarParkPage() {
-  let url = 'ws://localhost:8080/ws/info'
-  let ws = new WebSocket(url)
-
-  ws.onopen = function () {
-    console.log('Kết nối thành công')
-    ws.send('getInfo')
-  }
-
-  ws.onmessage = function (msg) {
-    let data = JSON.parse(msg.data)
-    console.log(data)
-  }
-
-  ws.onclose = function () {
-    console.log('Kết nối bị đóng')
-  }
-
-  ws.onerror = function (err) {
-    console.log('Có lỗi xảy ra: ', err)
-  }
+  const context = useContext(AccountContext)
+  const {value}: AccountContextType = context
   return (
     <div
       className={
@@ -43,22 +28,22 @@ export default function CarParkPage() {
         <Widget
           icon={<CircleParking className='h-7 w-7' />}
           title={'Slot vé ngày còn trống'}
-          subtitle={'20'}
+          subtitle={value?.parkInfor?.totalSlot || 0}
         />
         <Widget
           icon={<CircleParkingOff className='h-6 w-6' />}
           title={'Slot vé ngày đã đặt'}
-          subtitle={'20'}
+          subtitle={value?.parkInfor?.slotAvailable || 0}
         />
         <Widget
           icon={<CircleParking className='h-7 w-7' />}
           title={'Slot vé tháng còn trống'}
-          subtitle={'5'}
+          subtitle={value?.parkInfor?.totalSlotBooked || 0}
         />
         <Widget
           icon={<CircleParkingOff className='h-6 w-6' />}
           title={'Slot vé tháng đã đặt'}
-          subtitle={'10'}
+          subtitle={value?.parkInfor?.slotBookedAvailable || 0}
         />
       </div>
       <div className='mt-5 grid grid-cols-1 gap-5'>

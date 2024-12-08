@@ -15,7 +15,7 @@ import {
 import {Label} from '@/components/ui/label'
 import {Button} from '@/components/ui/button'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
+import {useRouter} from 'next/router'
 
 export interface AccountType {
   fullname: string
@@ -25,6 +25,12 @@ export interface AccountType {
   dateOfBirth: string
   token: string
   admin: boolean
+  parkInfor: {
+    totalSlot: number
+    slotAvailable: number
+    totalSlotBooked: number
+    slotBookedAvailable: number
+  }
 }
 
 export interface AccountContextType {
@@ -41,6 +47,12 @@ const AccountContext = createContext<AccountContextType>({
     dateOfBirth: '',
     token: '',
     admin: false,
+    parkInfor: {
+      totalSlot: 1,
+      slotAvailable: 1,
+      totalSlotBooked: 1,
+      slotBookedAvailable: 1,
+    },
   },
   setValue: () => {},
 })
@@ -53,13 +65,19 @@ const ContaxtProvider = ({
   initialToken: string | undefined
 }) => {
   const [value, setValue] = useState<AccountType>({
-    fullname: 'Bach',
-    email: 'dai@gmail.com',
+    fullname: '',
+    email: '',
     address: '',
     phoneNumber: '',
     dateOfBirth: '',
     token: initialToken || '',
     admin: false,
+    parkInfor: {
+      totalSlot: 1,
+      slotAvailable: 1,
+      totalSlotBooked: 1,
+      slotBookedAvailable: 1,
+    },
   })
   const [open, setOpen] = useState(false)
   const {data} = useSWR(
@@ -79,7 +97,8 @@ const ContaxtProvider = ({
 
   useEffect(() => {
     if (data) {
-      setValue({
+      setValue((prevParams) => ({
+        ...prevParams,
         fullname: data?.data?.fullname || '',
         email: data?.data?.email || '',
         address: data?.data?.address || '',
@@ -87,31 +106,77 @@ const ContaxtProvider = ({
         dateOfBirth: data?.data?.dateOfBirth || '',
         token: initialToken || '',
         admin: data?.data?.admin || '',
-      })
+      }))
     }
   }, [data])
 
   useEffect(() => {
-    let checkInterval: NodeJS.Timeout
-    if (initialToken) {
-      const tokenData = JSON.parse(atob(initialToken.split('.')[1]))
-      const expiryTime = tokenData.exp * 1000
-      let isTokenExpiring
-      checkInterval = setInterval(() => {
-        let currentTime = Date.now()
-        isTokenExpiring = expiryTime - currentTime < 5 * 1000
-        if (isTokenExpiring) {
-          setOpen(true)
-          clearInterval(checkInterval)
-        } else {
-          setOpen(false)
-        }
-      }, 4000)
+    let url = `${env.API}/ws/info`
+    let ws = new WebSocket(url)
+    ws.onopen = function () {
+      console.log('Kết nối thành công')
+      ws.send('getInfo')
     }
-    return () => clearInterval(checkInterval)
+
+    ws.onmessage = async function (msg) {
+      const res = await JSON.parse(msg.data)
+      console.log(res)
+      setValue((prevParams) => ({
+        ...prevParams,
+        parkInfor: res,
+      }))
+    }
+
+    ws.onclose = function () {
+      console.log('Kết nối bị đóng')
+    }
+
+    ws.onerror = function (err) {
+      console.log('Có lỗi xảy ra: ', err)
+    }
+  }, [])
+
+  useEffect(() => {
+    // let checkInterval: NodeJS.Timeout
+    // if (initialToken) {
+    //   const tokenData = JSON.parse(atob(initialToken.split('.')[1]))
+    //   const expiryTime = tokenData.exp * 1000
+    //   let isTokenExpiring
+    //   checkInterval = setInterval(() => {
+    //     let currentTime = Date.now()
+    //     isTokenExpiring = expiryTime - currentTime < 5 * 1000
+    //     if (isTokenExpiring) {
+    //       setOpen(true)
+    //       clearInterval(checkInterval)
+    //     } else {
+    //       setOpen(false)
+    //     }
+    //   }, 4000)
+    // }
+    // return () => clearInterval(checkInterval)
+
+    let timeoutId: NodeJS.Timeout
+
+    const setTokenTimeout = () => {
+      if (initialToken) {
+        const tokenData = JSON.parse(atob(initialToken.split('.')[1]))
+        const expiryTime = tokenData.exp * 1000
+        const currentTime = Date.now()
+        const timeRemaining = expiryTime - currentTime
+
+        if (timeRemaining > 5000) {
+          timeoutId = setTimeout(() => {}, timeRemaining - 5000)
+        } else {
+          setOpen(true)
+        }
+      }
+    }
+    setTokenTimeout()
+
+    return () => clearTimeout(timeoutId)
   }, [value])
   const handleLogout = () => {
-	  setOpen(false)
+    setOpen(false)
     logout()
   }
   return (
@@ -122,7 +187,10 @@ const ContaxtProvider = ({
           open={open}
           onOpenChange={setOpen}
         >
-          <DialogContent className='sm:max-w-[425px]' id='close-hidden'>
+          <DialogContent
+            className='sm:max-w-[425px]'
+            id='close-hidden'
+          >
             <DialogHeader>
               <DialogTitle>Phiên làm việc của bạn đã hệt hạn!</DialogTitle>
               <DialogDescription>

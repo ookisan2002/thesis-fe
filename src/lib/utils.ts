@@ -78,156 +78,177 @@ export function formatDate(dateString: string) {
   return format(date, 'dd/MM/yyyy')
 }
 
-export const lineChartOptionsTotalSpent1 = {
-  legend: {
-    show: false,
-  },
+export function formatDateToTimeStamp(dateString: any) {
+  if (!dateString) {
+    return ''
+  }
+  const date = new Date(dateString)
 
-  theme: {
-    mode: 'light',
-  },
-  chart: {
-    type: 'line',
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Tháng bắt đầu từ 0
+  const day = String(date.getDate()).padStart(2, '0')
+  const hours = String(date.getHours()).padStart(2, '0')
+  const minutes = String(date.getMinutes()).padStart(2, '0')
+  const seconds = String(date.getSeconds()).padStart(2, '0')
+  const milliseconds = String(date.getMilliseconds()).padStart(3, '0')
 
-    toolbar: {
-      show: false,
-    },
-  },
-
-  dataLabels: {
-    enabled: false,
-  },
-  stroke: {
-    curve: 'smooth',
-  },
-
-  tooltip: {
-    style: {
-      fontSize: '12px',
-      fontFamily: undefined,
-      backgroundColor: '#000000',
-    },
-    theme: 'dark',
-    x: {
-      format: 'dd/MM/yy HH:mm',
-    },
-  },
-  grid: {
-    show: false,
-  },
-  xaxis: {
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-    labels: {
-      style: {
-        colors: '#A3AED0',
-        fontSize: '12px',
-        fontWeight: '500',
-      },
-    },
-    type: 'text',
-    range: undefined,
-    categories: ['SEP', 'OCT', 'NOV', 'DEC', 'JAN', 'FEB'],
-  },
-
-  yaxis: {
-    show: false,
-    min: 0,
-  },
+  return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}.${milliseconds}`
 }
 
-export const barChartOptionsWeeklyRevenue = {
-  chart: {
-    stacked: true,
-    toolbar: {
+export const lineChartOptionsTotalSpentGen = (xAxis: string[]) => {
+  return {
+    legend: {
       show: false,
     },
-  },
-  // colors:['#ff3322','#faf']
-  tooltip: {
-    style: {
-      fontSize: '0.75rem',
-      fontFamily: undefined,
-      backgroundColor: '#000000',
+
+    theme: {
+      mode: 'light',
     },
-    theme: 'dark',
-    onDatasetHover: {
+    chart: {
+      type: 'line',
+
+      toolbar: {
+        show: false,
+      },
+    },
+
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: 'smooth',
+    },
+
+    tooltip: {
+      style: {
+        fontSize: '12px',
+        fontFamily: undefined,
+        backgroundColor: '#000000',
+      },
+      theme: 'dark',
+      x: {
+        format: 'dd/MM/yy HH:mm',
+      },
+    },
+    grid: {
+      show: false,
+    },
+    xaxis: {
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        show: false,
+      },
+      labels: {
+        style: {
+          colors: '#A3AED0',
+          fontSize: '12px',
+          fontWeight: '500',
+        },
+      },
+      type: 'text',
+      range: undefined,
+      categories: xAxis,
+    },
+
+    yaxis: {
+      show: false,
+      min: 0,
+    },
+  }
+}
+
+export const barChartOptionsRevenueGen = (xAxis: string[]) => {
+  return {
+    chart: {
+      stacked: true,
+      toolbar: {
+        show: false,
+      },
+    },
+    // colors:['#ff3322','#faf']
+    tooltip: {
       style: {
         fontSize: '0.75rem',
         fontFamily: undefined,
+        backgroundColor: '#000000',
       },
-    },
-  },
-  xaxis: {
-    categories: ['17', '18', '19', '20', '21', '22', '23', '24', '25'],
-    show: false,
-    labels: {
-      show: true,
-      style: {
-        colors: '#A3AED0',
-        fontSize: '0.875rem',
-        fontWeight: '500',
+      theme: 'dark',
+      onDatasetHover: {
+        style: {
+          fontSize: '0.75rem',
+          fontFamily: undefined,
+        },
       },
-    },
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  yaxis: {
-    show: false,
-    color: 'black',
-    labels: {
-      show: false,
-      style: {
-        colors: '#A3AED0',
-        fontSize: '0.875rem',
-        fontWeight: '500',
-      },
-    },
-  },
-
-  grid: {
-    borderColor: 'rgba(163, 174, 208, 0.3)',
-    show: true,
-    yaxis: {
-      lines: {
-        show: false,
-        opacity: 0.5,
-      },
-    },
-    row: {
-      opacity: 0.5,
     },
     xaxis: {
-      lines: {
+      categories: xAxis,
+      show: false,
+      labels: {
+        show: true,
+        style: {
+          colors: '#A3AED0',
+          fontSize: '0.875rem',
+          fontWeight: '500',
+        },
+      },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
         show: false,
       },
     },
-  },
-  fill: {
-    type: 'solid',
-    colors: ['#5E37FF', '#6AD2FF', '#E1E9F8'],
-  },
-  legend: {
-    show: false,
-  },
-  colors: ['#5E37FF', '#6AD2FF', '#E1E9F8'],
-  dataLabels: {
-    enabled: false,
-  },
-  plotOptions: {
-    bar: {
-      borderRadius: 10,
-      columnWidth: '20px',
+    yaxis: {
+      show: false,
+      color: 'black',
+      labels: {
+        show: false,
+        style: {
+          colors: '#A3AED0',
+          fontSize: '0.875rem',
+          fontWeight: '500',
+        },
+      },
     },
-  },
+
+    grid: {
+      borderColor: 'rgba(163, 174, 208, 0.3)',
+      show: true,
+      yaxis: {
+        lines: {
+          show: false,
+          opacity: 0.5,
+        },
+      },
+      row: {
+        opacity: 0.5,
+      },
+      xaxis: {
+        lines: {
+          show: false,
+        },
+      },
+    },
+    fill: {
+      type: 'solid',
+      colors: ['#5E37FF', '#6AD2FF', '#E1E9F8'],
+    },
+    legend: {
+      show: false,
+    },
+    colors: ['#5E37FF', '#6AD2FF', '#E1E9F8'],
+    dataLabels: {
+      enabled: false,
+    },
+    plotOptions: {
+      bar: {
+        borderRadius: 10,
+        columnWidth: '20px',
+      },
+    },
+  }
 }
 
 export const debounce = <T extends (...args: any[]) => any>(

@@ -56,8 +56,8 @@ export default function AdminSideBar() {
   )
   return (
     <>
-      <label htmlFor='admin_nav'>
-        <AlignJustify className='size-10 lg:hidden fixed top-16 right-16'/>
+      <label htmlFor='admin_nav' className='lg:hidden fixed top-16 right-16 backdrop-blur-xl p-4 xsm:p-2 rounded-full xsm:top-[1rem] xsm:right-[1rem] z-50'>
+        <AlignJustify className='size-10 xsm:size-[1.5rem]'/>
       </label>
       <input
         type='checkbox'
@@ -66,12 +66,12 @@ export default function AdminSideBar() {
       />
       <nav
         className={
-          'fixed left-0 top-0 h-screen w-[310px] bg-white shadow-2xl border-r border-gray-200 flex flex-col z-50 transition-all lg:!translate-x-0 xlg:translate-x-0 xlg:peer-checked/nav:translate-x-[-113%]'
+          'fixed left-0 top-0 h-screen w-[310px] bg-white shadow-2xl border-r border-gray-200 flex flex-col z-50 transition-all lg:!translate-x-0 xlg:translate-x-[-113%] xlg:peer-checked/nav:translate-x-0'
         }
       >
         <div
           className={
-            'w-full f-fit flex items-center justify-start py-12 px-14 border-b border-gray-200 mb-7'
+            'w-full f-fit flex items-center justify-start py-12 px-14 xsm:p-[2rem_1.5rem] border-b border-gray-200 mb-7'
           }
         >
           <Image
@@ -83,7 +83,7 @@ export default function AdminSideBar() {
           />
           <Link
             href='/'
-            className='cursor-pointer text-[1.5rem] tablet:text-[3.25rem] font-bold text-black ml-3 tracking-wider'
+            className='cursor-pointer text-[1.5rem] tablet:text-[3.25rem] xsm:text-[1.625rem] font-bold text-black ml-3 tracking-wider'
           >
             Bach Dai
           </Link>
