@@ -3,6 +3,7 @@ import {twMerge} from 'tailwind-merge'
 import React from 'react'
 import {toast} from 'sonner'
 import {redirect} from 'next/navigation'
+import {format, parse} from 'date-fns'
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
@@ -14,14 +15,32 @@ interface postFetcherProps {
   header?: any
 }
 
-interface getFetcherProps {
+interface fetcherProps {
   url: string
   header?: any
 }
 
-export const getFetcher = async ({url, header = {}}: getFetcherProps) =>
+export const getFetcher = async ({url, header = {}}: fetcherProps) =>
   await fetch(url, {
     method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      ...header,
+    },
+  })
+    .then((r: any) => {
+      if (r.status === 404) {
+        const error = new Error(`Not found!! ${r.statusText}`)
+        throw error
+      }
+
+      return r.json()
+    })
+    .catch((error: any) => console.log(error.message))
+
+export const deleteFetcher = async ({url, header = {}}: fetcherProps) =>
+  await fetch(url, {
+    method: 'DELETE',
     headers: {
       'Content-Type': 'application/json',
       ...header,
@@ -72,10 +91,8 @@ export function toQueryString(params?: Record<string, any>): string {
 }
 
 export function formatDate(dateString: string) {
-  const {format, parseISO} = require('date-fns')
-
-  const date = parseISO(dateString)
-  return format(date, 'dd/MM/yyyy')
+  const date = parse(dateString, 'HH:mm:ss dd-MM-yyyy', new Date())
+  return format(date, 'dd-MM-yyyy')
 }
 
 export function formatDateToTimeStamp(dateString: any) {

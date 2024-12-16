@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useContext, useState } from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import Card from '../Card/page'
 import {useForm} from 'react-hook-form'
 import {adminAddCarFormSchema} from '@/lib/Schemas'
@@ -15,14 +15,29 @@ import {
   FormMessage,
 } from '../ui/form'
 import useSWR from 'swr'
-import { AccountContext, AccountContextType } from '../ContextProvider/page'
-import { env } from '@/lib/environment'
-import { postFetcher } from '@/lib/utils'
-import { DialogFooter } from '../ui/dialog'
-import { Button } from '../ui/button'
+import {AccountContext, AccountContextType} from '../ContextProvider/page'
+import {env} from '@/lib/environment'
+import {cn, getFetcher, postFetcher, toQueryString} from '@/lib/utils'
+import {DialogFooter} from '../ui/dialog'
+import {Button} from '../ui/button'
+import {Popover, PopoverContent, PopoverTrigger} from '../ui/popover'
+import {Check, ChevronsUpDown, X} from 'lucide-react'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+  CommandList,
+} from '../ui/command'
+import useSWRMutation from 'swr/mutation'
+import {Input} from '../ui/input'
+import {toast} from 'sonner'
 
-export default function AdminAddCarDialog() {
-   const [formData, setFormData] = useState<FormData | null>(null)
+export default function AdminAddCarDialog({
+  closeModal,
+}: {
+  closeModal: React.Dispatch<React.SetStateAction<string>>
+}) {
   const formAddCar = useForm<z.infer<typeof adminAddCarFormSchema>>({
     resolver: zodResolver(adminAddCarFormSchema),
     defaultValues: {
@@ -33,34 +48,74 @@ export default function AdminAddCarDialog() {
   })
   const context = useContext(AccountContext)
   const {value}: AccountContextType = context
+  const [userFilter, setUserFilter] = useState<string>('')
+  const [userFilterResult, setUserFilterResult] = useState<any>([])
+  const {
+    data: updateCar,
+    trigger,
+    isMutating: carListUpdateLoading,
+  } = useSWRMutation(value.token ? [`${env.API}/car`] : null, ([url], {arg}) =>
+    postFetcher({
+      url: url,
+      data: arg,
+      header: {
+        Authorization: `Bearer ${value.token}`,
+      },
+    }),
+  )
 
-  const {data: carListUpdate, isLoading: carListUpdateLoading} = useSWR(
-    formData && value.token ? [`${env.API}/car`, formData] : null,
-    ([url, formData]) =>
-      postFetcher({
+  const {data: userList, trigger: triggerUserList} = useSWRMutation(
+    `${env.API}/user/list-user?${toQueryString({email: userFilter})}`,
+    (url: string) =>
+      getFetcher({
         url: url,
-        data: formData,
         header: {
           Authorization: `Bearer ${value.token}`,
         },
       }),
-    {
-      revalidateOnFocus: false,
-      revalidateOnReconnect: false,
-    },
   )
 
-  const onSubmit = async (car: any) => {
-    setFormData(car)
+  const onSubmit = (car: any) => {
+    trigger(car)
   }
+  useEffect(() => {
+    if (updateCar) {
+      toast(updateCar?.message, {
+        classNames: {
+          toast: updateCar?.status ? 'bg-primary' : 'bg-red-500',
+          title: 'text-white',
+        },
+      })
+    }
+  }, [updateCar])
+  useEffect(() => {
+    const debouncedTrigger = setTimeout(() => {
+      if (value.token && userFilter.length !== 0) {
+        triggerUserList()
+      }
+    }, 600)
+    return () => clearTimeout(debouncedTrigger)
+  }, [userFilter])
+
+  const [open, setOpen] = React.useState(false)
+
+  useEffect(() => {
+    setUserFilterResult(userList?.data?.items || [])
+  }, [userList])
 
   return (
     <div className='bg-[#64748b4d] fixed top-0 left-0 w-[100vw] h-[100vh] z-50 flex justify-center items-center'>
-      <Card extra='p-6'>
+      <Card extra='p-6 relative'>
+        <X
+          className='h-4 w-4 absolute top-6 right-6 cursor-pointer'
+          onClick={() => closeModal('')}
+        />
         <h4 className='text-lg font-semibold leading-none tracking-tight'>
           Thêm xe
         </h4>
-        <p className='text-sm text-muted-foreground mb-4'>Thêm xe cho người dùng</p>
+        <p className='text-sm text-muted-foreground mb-4'>
+          Thêm xe cho người dùng
+        </p>
         <Form {...formAddCar}>
           <form
             className='w-full h-fit grid gap-y-[0.62rem]'
@@ -116,6 +171,87 @@ export default function AdminAddCarDialog() {
                           className='p-[0.81rem_1.5rem] w-full'
                           required
                         />
+                      </FormControl>
+                    </FormItem>
+                    <FormMessage />
+                  </FormItem>
+                )
+              }}
+            />
+
+            <FormField
+              control={formAddCar.control}
+              name={'userId'}
+              render={({field}) => {
+                return (
+                  <FormItem className='mb-[1.5rem]'>
+                    <div className='mb-2'>
+                      <FormLabel className='text-[0.9375rem] font-helvetica leading-[150%] font-[500] text-blackPrimary'>
+                        Người dùng
+                      </FormLabel>
+                    </div>
+                    <FormItem className='w-full h-[3.125rem] rounded-[0.5rem] bg-[rgba(217,217,217,0.4)]'>
+                      <FormControl>
+                        <Popover
+                          open={open}
+                          onOpenChange={setOpen}
+                        >
+                          <PopoverTrigger asChild>
+                            <Button
+                              variant='outline'
+                              role='combobox'
+                              aria-expanded={open}
+                              className='size-full bg-transparent justify-between'
+                            >
+                              {field.value.length > 0
+                                ? userFilterResult.find(
+                                    (user: any) => user.id == field.value,
+                                  )?.email
+                                : 'Select User email...'}
+                              <ChevronsUpDown className='opacity-50' />
+                            </Button>
+                          </PopoverTrigger>
+                          <PopoverContent className='w-[15.3rem] p-0'>
+                            <Command>
+                              <Input
+                                onChange={(email: any) =>
+                                  setUserFilter(email.target.value)
+                                }
+                                placeholder='Search User email...'
+                                className='!ring-0'
+                              />
+                              <CommandList>
+                                <CommandEmpty>No user found.</CommandEmpty>
+                                <CommandGroup>
+                                  {userFilterResult?.map((user: any) => (
+                                    <CommandItem
+                                      key={user.id}
+                                      value={user.id}
+                                      onSelect={(currentValue) => {
+                                        field.onChange(
+                                          currentValue === field.value
+                                            ? ''
+                                            : `${user.id}`,
+                                        )
+                                        setOpen(false)
+                                      }}
+                                    >
+                                      {user.email}
+                                      <Check
+                                        className={cn(
+                                          'ml-auto',
+                                          field.value === user.id
+                                            ? 'opacity-100'
+                                            : 'opacity-0',
+                                        )}
+                                      />
+                                    </CommandItem>
+                                  ))}
+                                </CommandGroup>
+                              </CommandList>
+                            </Command>
+                          </PopoverContent>
+                        </Popover>
                       </FormControl>
                     </FormItem>
                     <FormMessage />

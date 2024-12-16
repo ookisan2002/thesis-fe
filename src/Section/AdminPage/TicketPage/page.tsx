@@ -179,10 +179,13 @@ export default function TicketTableSection({ticketList}: any) {
       <div className='grid grid-cols-3 gap-2 tablet:gap-6 xsm:grid-cols-1 tablet:grid-cols-2'>
         {userCarList?.map((it:any) => (
           <CustomeTicketCard
-            title={it?.code}
-            desRow1={`Giá: $${it?.price || 0}`}
-            desRow2={`Loại vé: ${it?.car?.ticketType?.name}`}
-            desRow3={`Email: ${it?.user?.email}`}
+            title={it?.car?.code}
+            desRow1={`Giá: ${(it?.price || 0).toLocaleString('vi-VN', {
+              style: 'currency',
+              currency: 'VND',
+            })}`}
+            desRow2={`Loại vé: ${it?.ticketType?.name}`}
+            desRow3={`Email: ${it?.car?.user?.email}`}
             subDes={formatDate(it?.createdAt)}
             key={it?.id}
           />

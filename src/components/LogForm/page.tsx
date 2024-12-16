@@ -81,7 +81,8 @@ export default function LogForm({children}: {children: React.ReactNode}) {
       }
     })
 
-    setValue({
+    setValue((prevParams) => ({
+      ...prevParams,
       fullname: data?.user?.fullname,
       email: data?.user?.email,
       address: data?.user?.address,
@@ -89,7 +90,7 @@ export default function LogForm({children}: {children: React.ReactNode}) {
       dateOfBirth: data?.user?.dateOfBirth,
       token: data?.token,
       admin: data?.user?.admin,
-    })
+    }))
   }
 
   useEffect(() => {

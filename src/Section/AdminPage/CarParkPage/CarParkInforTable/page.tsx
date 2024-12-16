@@ -182,7 +182,7 @@ export default function CarParkInforTable() {
         <h3 className='text-xl tablet:text-[2.25rem] font-bold text-[#1b254b]'>
           Xe trong bãi
         </h3>
-        <div className='w-full overflow-scroll '>
+        <div className='w-full overflow-scroll no-scrollbar'>
           <table className='w-[100rem] lg:w-full mt-8'>
             <thead>
               <tr className='!border-b-[0.04375rem] !border-gray-400'>

@@ -33,7 +33,6 @@ export default async function CarPage() {
         'p-[1rem] ml-[310px] xlg:ml-0 tablet:p-[2rem] bg-background-light min-h-screen'
       }
     >
-      {/* <AdminAddCarDialog/> */}
       <p
         className={
           'shrink text-[33px] capitalize text-navy-700 dark:text-white font-bold'

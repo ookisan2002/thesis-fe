@@ -1,6 +1,6 @@
 import React from 'react'
 
-export default function TopUser({topUser=[1,2,3,4,5]}:any) {
+export default function TopUser({topUser=[]}:any) {
   return (
     <div className='col-span-1 xsm:col-span-3'>
       <div className='!z-5 sticky top-0 flex flex-col rounded-[20px] bg-white bg-clip-border shadow-3xl shadow-shadow-100 dark:shadow-none  dark:!bg-navy-800 dark:text-white  w-full sm:overflow-auto px-6 py-4 tablet:p-[2rem_2.5rem]'>
@@ -19,13 +19,16 @@ export default function TopUser({topUser=[1,2,3,4,5]}:any) {
             </tr>
           </thead>
           <tbody>
-            {topUser.map((it: number) => (
+            {topUser.map((it: any) => (
               <tr key={it}>
                 <td className='text-sm tablet:text-[1.5rem] py-3 tablet:py-[1rem] font-medium text-[#1b254b]'>
-                  dainam@gmail.com
+                  {it?.email}
                 </td>
                 <td className='py-3 tablet:text-[1.5rem] text-md font-medium text-[#a3aed0]'>
-                  123$
+                {(it?.total || 0).toLocaleString('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    })}
                 </td>
               </tr>
             ))}

@@ -1,3 +1,5 @@
+'use client'
+
 import CustomeButton from '@/components/CustomeButton/page'
 import React from 'react'
 
@@ -9,15 +11,15 @@ export default function ParkingOptionSection({ticketTypeList}: any) {
       </h2>
       <div className='bg-primary w-[2.6875rem] h-[3px] mt-[0.2rem] mb-[3rem] xsm:mb-[1.5rem] relative z-[1]'></div>
       <div className='w-full flex justify-center xsm:flex-col'>
-        {/* {ticketTypeList.map((it: any) => (
+        {ticketTypeList.map((it: any) => (
           <div
             key={it.id}
             className='flex flex-col p-[2.9rem_2rem] mx-[1rem] w-[16.75rem] border border-dashed rounded-[5px] border-text-grey items-center'
           >
             <p className='text-primary text-[1.125rem]'>
-              <span className='text-[3.75rem] '>${it.price}</span>/{it.name}
+              <span className='text-[2.75rem] '>${it.price}</span>/{it.type}
             </p>
-            <h5 className='text-[1.5rem] font-bold mt-[1.5rem]'>Premium</h5>
+            <h5 className='text-[1.5rem] font-bold mt-[1.5rem]'>{it.name}</h5>
             <p className='text-center !line-clamp-3 text-[1rem] leading-[1.42rem] text-text-grey m-[0.65rem_0]'>
               This plan includes all of the services that come with a parking
               space!
@@ -27,37 +29,8 @@ export default function ParkingOptionSection({ticketTypeList}: any) {
               buttonClass='mt-[1.8rem]'
             />
           </div>
-        ))} */}
+        ))}
 
-        <div className='flex flex-col p-[2.9rem_2rem] mx-[1rem] xsm:m-[1.25rem_0] w-[16.75rem] xsm:w-full border border-dashed rounded-[5px] border-text-grey items-center'>
-          <p className='text-primary text-[1.125rem]'>
-            <span className='text-[3.75rem] '>$30</span>/day
-          </p>
-          <h5 className='text-[1.5rem] font-bold mt-[1.5rem]'>Premium</h5>
-          <p className='text-center !line-clamp-3 text-[1rem] leading-[1.42rem] text-text-grey m-[0.65rem_0]'>
-            This plan includes all of the services that come with a parking
-            space!
-          </p>
-          <CustomeButton
-            content='Learn More'
-            buttonClass='mt-[1.8rem]'
-          />
-        </div>
-
-        <div className='flex flex-col p-[2.9rem_2rem] mx-[1rem] xsm:m-[1.25rem_0] w-[16.75rem] xsm:w-full border border-dashed rounded-[5px] border-text-grey items-center'>
-          <p className='text-primary text-[1.125rem]'>
-            <span className='text-[3.75rem] '>$30</span>/day
-          </p>
-          <h5 className='text-[1.5rem] font-bold mt-[1.5rem]'>Premium</h5>
-          <p className='text-center !line-clamp-3 text-[1rem] leading-[1.42rem] text-text-grey m-[0.65rem_0]'>
-            This plan includes all of the services that come with a parking
-            space!
-          </p>
-          <CustomeButton
-            content='Learn More'
-            buttonClass='mt-[1.8rem]'
-          />
-        </div>
       </div>
     </section>
   )

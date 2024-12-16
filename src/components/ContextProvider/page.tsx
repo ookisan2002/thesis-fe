@@ -165,7 +165,7 @@ const ContaxtProvider = ({
         const timeRemaining = expiryTime - currentTime
 
         if (timeRemaining > 5000) {
-          timeoutId = setTimeout(() => {}, timeRemaining - 5000)
+          timeoutId = setTimeout(() => {setTokenTimeout()}, timeRemaining - 5000)
         } else {
           setOpen(true)
         }

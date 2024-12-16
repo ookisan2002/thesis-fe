@@ -1,3 +1,4 @@
+
 import Banner from '@/Section/Homepage/Banner/page'
 import getDictionary from '../../dictionaries'
 import WhyChooseUs from '@/Section/Homepage/WhyChooseUs/page'
@@ -10,17 +11,17 @@ export default async function Home({searchParams, params}: any) {
   const t = await getDictionary(params.lang)
   const {viewport} = searchParams
   const {lang} = params
-	const ticketType = {
-		data: []
-	}
-  // const [ticketType] = await Promise.all([getData({api: '/ticket-type'})])
+	// const ticketType = {
+	// 	data: []
+	// }
+  const [ticketType] = await Promise.all([getData({api: '/guest/ticket-type'})])
   return (
     <main className='flex flex-col relative'>
       <Banner />
       <AdvantageSection />
       <WhyChooseUs />
       <CustomerReviewSection />
-      <ParkingOptionSection ticketTypeList={ticketType.data} />
+      <ParkingOptionSection ticketTypeList={ticketType?.data || []} />
     </main>
   )
 }

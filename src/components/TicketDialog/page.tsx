@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useRef, useState} from 'react'
 import {
   Dialog,
   DialogContent,
@@ -11,7 +11,18 @@ import {
 } from '../ui/dialog'
 import './styles.css'
 import CustomTable from '../CustomTable/page'
-import { ticketFilterParams } from '@/lib/constants'
+import {ticketFilterParams} from '@/lib/constants'
+import useSWR from 'swr'
+import {
+  formatDate,
+  getFetcher,
+  renderPagination,
+  toQueryString,
+} from '@/lib/utils'
+import {AccountContext, AccountContextType} from '../ContextProvider/page'
+import {env} from '@/lib/environment'
+import {da} from 'date-fns/locale'
+import {set} from 'date-fns'
 
 export type Ticket = {
   id: string
@@ -122,7 +133,10 @@ export const data: Ticket[] = [
 ]
 
 export default function TicketDialog({children}: {children: React.ReactNode}) {
-  const [userCarList, setUserCarList] = useState<any>({
+  const context = useContext(AccountContext)
+  const {value}: AccountContextType = context
+  const pagination = useRef(null)
+  const [userTicketList, setUserTicketList] = useState<any>({
     totalPage: 10,
     currentPage: 1,
     items: [],
@@ -131,9 +145,53 @@ export default function TicketDialog({children}: {children: React.ReactNode}) {
     code: '',
     email: '',
     page: 1,
-    size:3,
+    size: 3,
     dateRange: undefined,
   })
+
+  const {data, isLoading} = useSWR(
+    value.token
+      ? `${env.API}/ticket/user?${toQueryString({
+          code: filterParams.code,
+          page: filterParams.page,
+          size: 9,
+        })}`
+      : null,
+    (url: string) =>
+      getFetcher({
+        url: url,
+        header: {
+          Authorization: `Bearer ${value.token}`,
+        },
+      }),
+    {
+      revalidateOnFocus: false,
+      revalidateOnReconnect: false,
+    },
+  )
+  useEffect(() => {
+    if (pagination.current) {
+      renderPagination({
+        totalPages: userTicketList?.totalPage || 10,
+        currentPage: userTicketList?.currentPage || 1,
+        setCurrentPage: (i: number) => {
+          setFilterParams((prevParams) => ({
+            ...prevParams,
+            page: i,
+          }))
+        },
+        paginationControl: pagination.current,
+      })
+    }
+  }, [userTicketList])
+  useEffect(() => {
+    setUserTicketList({
+      totalPage: data?.data?.totalPage || 10,
+      currentPage: data?.data?.currentPage || 1,
+      items: data?.data?.items || [],
+    })
+  }, [data])
+
   //   useEffect(() => {
   //     clearTimeout(searchTimeOut)
   //     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -147,10 +205,9 @@ export default function TicketDialog({children}: {children: React.ReactNode}) {
   //     console.log('Form data:', data)
   //   }
 
-
   // useEffect(() => {
   //   if (carList?.data?.items.length > 0 && carList?.data?.items.length) {
-  //     setUserCarList((prevParams: any) => ({
+  //     setuserTicketList((prevParams: any) => ({
   //       ...prevParams,
   //       totalPage: carList?.data?.totalPage || 10,
   //       currentPage: carList?.data?.currentPage || 1,
@@ -173,143 +230,82 @@ export default function TicketDialog({children}: {children: React.ReactNode}) {
             All ticket you recently bought in 3 month.
           </DialogDescription>
         </DialogHeader>
-        <div className='grid gap-4 py-4'>
-          <div className='flex flex-col'>
-            <div className='overflow-x-auto shadow-md sm:rounded-lg'>
-              <div className='inline-block min-w-full align-middle'>
-                <div className='overflow-hidden relative h-[20.27rem] overflow-y-auto no-scrollbar'>
-                  <table className='min-w-full divide-y divide-gray-200 dark:divide-gray-700'>
-                    <thead className='bg-gray-100 dark:bg-gray-700 sticky top-0'>
-                      <tr>
-                        <th
-                          scope='col'
-                          className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                        >
-                          Car
-                        </th>
-                        <th
-                          scope='col'
-                          className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                        >
-                          Status
-                        </th>
-                        <th
-                          scope='col'
-                          className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                        >
-                          Valid date
-                        </th>
-                        <th
-                          scope='col'
-                          className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                        >
-                          Expired date
-                        </th>
-                        <th
-                          scope='col'
-                          className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                        >
-                          Price
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className='bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700'>
-                        {data.map((it) => (
-                          <tr key={it.id} className='hover:bg-gray-100 dark:hover:bg-gray-700'>
-                            <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                              {it.car}
-                            </td>
-                            <td className='py-4 px-6 text-sm font-medium text-gray-500 whitespace-nowrap dark:text-white'>
-                              {it.status}
-                            </td>
-                            <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                              {it.validDate}
-                            </td>
-                            <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                              {it.expiredDate}
-                            </td>
-                            <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                              {it.price}
-                            </td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-            {/* <CustomTable
-              currentPage={userCarList.totalPage}
-              totalPage={userCarList.currentPage}
-              setCurrentPage={(i: number) => {
-                setFilterParams((prevParams) => ({
-                  ...prevParams,
-                  page: i,
-                }))
-              }}
-              colRender={() => (
-                <tr>
-                  <th
-                    scope='col'
-                    className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                  >
-                    Biển số
-                  </th>
-                  <th
-                    scope='col'
-                    className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                  >
-                    Ngày đăng kí
-                  </th>
-                  <th
-                    scope='col'
-                    className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
-                  ></th>
+        <CustomTable
+          currentPage={userTicketList.totalPage}
+          totalPage={userTicketList.currentPage}
+          setCurrentPage={(i: number) => {
+            setFilterParams((prevParams) => ({
+              ...prevParams,
+              page: i,
+            }))
+          }}
+          colRender={() => (
+            <tr>
+              <th
+                scope='col'
+                className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
+              >
+                Xe
+              </th>
+              <th
+                scope='col'
+                className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
+              >
+                Loại vé
+              </th>
+              <th
+                scope='col'
+                className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
+              >
+                Ngày mua
+              </th>
+              <th
+                scope='col'
+                className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
+              >
+                Ngày hết hạn
+              </th>
+              <th
+                scope='col'
+                className='py-3 px-6 text-xs font-medium tracking-wider text-left text-gray-700 uppercase dark:text-gray-400'
+              >
+                Giá
+              </th>
+            </tr>
+          )}
+          rowData={userTicketList.items.map((it: any) => {
+            return {
+              content: it,
+              rowRender: (obj: any) => (
+                <tr
+                  key={it?.id}
+                  className='hover:bg-gray-100 dark:hover:bg-gray-700'
+                >
+                  <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
+                    {obj.car.code}
+                  </td>
+                  <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
+                    {obj.name}
+                  </td>
+                  <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
+                    {obj.startDate ? formatDate(it.startDate) : null}
+                    {/* {obj.startDate} */}
+                  </td>
+                  <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
+                    {obj.endDate ? formatDate(it.endDate) : null}
+                    {/* {obj.endDate} */}
+                  </td>
+                  <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
+                    {obj.price.toLocaleString('vi-VN', {
+                      style: 'currency',
+                      currency: 'VND',
+                    })}
+                  </td>
                 </tr>
-              )}
-              rowData={userCarList.items.map((it: any) => {
-                return {
-                  content: it,
-                  rowRender: (obj: any) => (
-                    <tr
-                      key={obj?.id}
-                      className='hover:bg-gray-100 dark:hover:bg-gray-700'
-                    >
-                      <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                        {obj.code}
-                      </td>
-                      <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                        {it?.createdAt ? formatDate(it?.createdAt) : null}
-                        {obj?.createdAt}
-                      </td>
-                      <td className='py-4 px-6 text-sm font-medium text-gray-900 whitespace-nowrap dark:text-white'>
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button
-                              variant='ghost'
-                              className='h-8 w-8 p-0'
-                            >
-                              <span className='sr-only'>Open menu</span>
-                              <MoreHorizontal className='h-4 w-4' />
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align='end'>
-                            <DropdownMenuItem
-                              onClick={() => console.log('test')}
-                              className='focus:bg-red-500 focus:text-white'
-                            >
-                              Xóa xe
-                            </DropdownMenuItem>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </td>
-                    </tr>
-                  ),
-                }
-              })}
-            /> */}
-          </div>
-        </div>
+              ),
+            }
+          })}
+        />
       </DialogContent>
     </Dialog>
   )
