@@ -14,10 +14,13 @@ export default function ParkingOptionSection({ticketTypeList}: any) {
         {ticketTypeList.map((it: any) => (
           <div
             key={it.id}
-            className='flex flex-col p-[2.9rem_2rem] mx-[1rem] w-[16.75rem] border border-dashed rounded-[5px] border-text-grey items-center'
+            className='flex flex-col p-[2.9rem_2rem] mx-[1rem] w-[22.75rem] xsm:w-[18.75rem] border border-dashed rounded-[5px] border-text-grey items-center'
           >
             <p className='text-primary text-[1.125rem]'>
-              <span className='text-[2.75rem] '>${it.price}</span>/{it.type}
+              <span className='text-[2.75rem] '>{(it?.price || 0).toLocaleString('vi-VN', {
+            style: 'currency',
+            currency: 'VND',
+          })}</span>/{it.type}
             </p>
             <h5 className='text-[1.5rem] font-bold mt-[1.5rem]'>{it.name}</h5>
             <p className='text-center !line-clamp-3 text-[1rem] leading-[1.42rem] text-text-grey m-[0.65rem_0]'>
