@@ -8,15 +8,6 @@ import {DateRange} from 'react-day-picker'
 import {Button} from '@/components/ui/button'
 import {CalendarIcon} from 'lucide-react'
 import {format} from 'date-fns'
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select'
 import {carParkInforParams} from '@/lib/constants'
 import {
   formatDateToTimeStamp,
@@ -46,7 +37,7 @@ export default function CarParkInforTable() {
   const context = useContext(AccountContext)
   const {value}: AccountContextType = context
 
-  const {data, trigger, isMutating} = useSWRMutation(
+  const {data, trigger} = useSWRMutation(
     `${env.API}/car/packing?${toQueryString({
       code: filterParams.code,
       email: filterParams.email,
@@ -84,7 +75,7 @@ export default function CarParkInforTable() {
       trigger()
     }, 300)
     return () => clearTimeout(debouncedTrigger)
-  }, [filterParams])
+  }, [filterParams, trigger])
 
   return (
     <div className='flex flex-col items-end'>

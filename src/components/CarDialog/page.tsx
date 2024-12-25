@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useContext, useEffect, useRef, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {
   Dialog,
   DialogContent,
@@ -19,7 +19,7 @@ import {
   FormMessage,
 } from '../ui/form'
 import {useForm} from 'react-hook-form'
-import {string, z} from 'zod'
+import {z} from 'zod'
 import {zodResolver} from '@hookform/resolvers/zod'
 import {Button} from '../ui/button'
 import {addCarFormSchema} from '@/lib/Schemas'
@@ -36,7 +36,6 @@ import {
   formatDate,
   getFetcher,
   postFetcher,
-  renderPagination,
   toQueryString,
 } from '@/lib/utils'
 import {env} from '@/lib/environment'
@@ -86,7 +85,7 @@ export default function CarDialog({children}: {children: React.ReactNode}) {
     }),
   )
 
-  const {data: carList, isLoading: carListLoading} = useSWR(
+  const {data: carList} = useSWR(
     value.token
       ? `${env.API}/car/get-car-user?${toQueryString({
           page: filterParams.page,
@@ -110,7 +109,7 @@ export default function CarDialog({children}: {children: React.ReactNode}) {
     triggerAddCar(car)
   }
 
-  const {data: deleteCar, trigger} = useSWRMutation(
+  const {trigger} = useSWRMutation(
     value.token ? [`${env.API}/car`] : null,
     ([url], {arg}) =>
       deleteFetcher({

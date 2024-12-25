@@ -14,7 +14,6 @@ import {
   FormLabel,
   FormMessage,
 } from '../ui/form'
-import useSWR from 'swr'
 import {AccountContext, AccountContextType} from '../ContextProvider/page'
 import {env} from '@/lib/environment'
 import {cn, getFetcher, postFetcher, toQueryString} from '@/lib/utils'
@@ -95,7 +94,7 @@ export default function AdminAddCarDialog({
       }
     }, 600)
     return () => clearTimeout(debouncedTrigger)
-  }, [userFilter])
+  }, [triggerUserList, userFilter, value.token])
 
   const [open, setOpen] = React.useState(false)
 

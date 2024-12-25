@@ -1,6 +1,6 @@
 import React from 'react'
 import Widget from '@/components/Widget/page'
-import {ArrowUp, ChartColumn, File, HandCoins, Ticket} from 'lucide-react'
+import {ArrowUp, ChartColumn, HandCoins, Ticket} from 'lucide-react'
 import Card from '@/components/Card/page'
 import LineChart from '@/components/Chart/LineChart/page'
 import {
@@ -75,41 +75,40 @@ export default async function AdminDashboardPage() {
   const token = cookieStore.get('token')
   const [revenue] = await Promise.all([
     getData({
-      api: '/statistic/income',
+      api: '/statistics/income',
       option: {
         Authorization: `Bearer ${token?.value}`,
       },
     }),
     // getDictionary(params.lang),
   ])
-  console.log(revenue)
-  // const barChartDataTicketQuantityRevenue = revenue?.data?.map(
-  //   (item: any, i: number) => {
-  //     return {
-  //       name: item?.ticketName,
-  //       data: revenue?.data[0]?.incomeList.map((income: any) => income?.total),
-  //       color: `#${i}AD2Fa`,
-  //     }
-  //   },
-  // )
+  const barChartDataTicketQuantityRevenue = revenue?.data?.map(
+    (item: any, i: number) => {
+      return {
+        name: item?.ticketName,
+        data: revenue?.data[0]?.incomeList.map((income: any) => income?.total),
+        color: `#${i}AD2Fa`,
+      }
+    },
+  )
 
-  // const lineChartDataTotalSpent = revenue?.data?.map((item: any, i: number) => {
-  //   return {
-  //     name: item?.ticketName,
-  //     data: revenue?.data[0]?.incomeList.map(
-  //       (income: any) => income?.totalIncome,
-  //     ),
-  //     color: `#${i}AD2Fa`,
-  //   }
-  // })
+  const lineChartDataTotalSpent = revenue?.data?.map((item: any, i: number) => {
+    return {
+      name: item?.ticketName,
+      data: revenue?.data[0]?.incomeList.map(
+        (income: any) => income?.totalIncome,
+      ),
+      color: `#${i}AD2Fa`,
+    }
+  })
 
-  // const barChartOptionsRevenue = barChartOptionsRevenueGen(
-  //   revenue?.data[0]?.incomeList.map((income: any) => income?.month),
-  // )
+  const barChartOptionsRevenue = barChartOptionsRevenueGen(
+    revenue?.data[0]?.incomeList.map((income: any) => income?.month),
+  )
 
-  // const lineChartOptionsTotalSpent = lineChartOptionsTotalSpentGen(
-  //   revenue?.data[0]?.incomeList.map((income: any) => income?.month),
-  // )
+  const lineChartOptionsTotalSpent = lineChartOptionsTotalSpentGen(
+    revenue?.data[0]?.incomeList.map((income: any) => income?.month),
+  )
 
   return (
     <div
@@ -125,7 +124,7 @@ export default async function AdminDashboardPage() {
         Main dashboash
       </p>
       <div className='mt-3 grid grid-cols-1 gap-5 tablet:grid-cols-2 lg:grid-cols-4'>
-        {/* <Widget
+        <Widget
           icon={<ChartColumn className='h-7 w-7 tablet:size-[3rem]' />}
           title={revenue?.data[0]?.ticketName}
           subtitle={revenue?.data[0]?.totalIncome}
@@ -143,20 +142,20 @@ export default async function AdminDashboardPage() {
         <Widget
           icon={<HandCoins className='h-6 w-6 tablet:size-[3rem]' />}
           title={'Tổng doanh thu'}
-          subtitle={`$${
+          subtitle={`${
             revenue?.data[0]?.totalIncome + revenue?.data[1]?.totalIncome
           }`}
-        /> */}
+        />
       </div>
       <div className='mt-5 grid grid-cols-2 xsm:grid-cols-1 gap-5'>
-        {/* <TotalSpent
+        <TotalSpent
           lineChartDataTotalSpent={lineChartDataTotalSpent}
           lineChartOptionsTotalSpent={lineChartOptionsTotalSpent}
         />
         <TicketQuantityRevenue
           barChartDataTicketQuantityRevenue={barChartDataTicketQuantityRevenue}
           barChartOptionsRevenue={barChartOptionsRevenue}
-        /> */}
+        />
       </div>
     </div>
   )

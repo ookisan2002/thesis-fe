@@ -1,8 +1,5 @@
 import {type ClassValue, clsx} from 'clsx'
 import {twMerge} from 'tailwind-merge'
-import React from 'react'
-import {toast} from 'sonner'
-import {redirect} from 'next/navigation'
 import {format, parse} from 'date-fns'
 
 export function cn(...inputs: ClassValue[]) {
@@ -36,6 +33,7 @@ export const getFetcher = async ({url, header = {}}: fetcherProps) =>
 
       return r.json()
     })
+    // eslint-disable-next-line no-console
     .catch((error: any) => console.log(error.message))
 
 export const deleteFetcher = async ({url, header = {}}: fetcherProps) =>
@@ -54,6 +52,7 @@ export const deleteFetcher = async ({url, header = {}}: fetcherProps) =>
 
       return r.json()
     })
+    // eslint-disable-next-line no-console
     .catch((error: any) => console.log(error.message))
 
 export const postFetcher = async ({url, data, header = {}}: postFetcherProps) =>
@@ -73,6 +72,7 @@ export const postFetcher = async ({url, data, header = {}}: postFetcherProps) =>
 
       return r.json()
     })
+    // eslint-disable-next-line no-console
     .catch((error: any) => console.log(error.message))
 
 export function toQueryString(params?: Record<string, any>): string {
@@ -268,6 +268,7 @@ export const barChartOptionsRevenueGen = (xAxis: string[]) => {
   }
 }
 
+// eslint-disable-next-line no-unused-vars
 export const debounce = <T extends (...args: any[]) => any>(
   fn: T,
   ms = 300,
@@ -287,6 +288,7 @@ export const renderPagination = function ({
 }: {
   totalPages: number
   currentPage: number
+  // eslint-disable-next-line no-unused-vars
   setCurrentPage: (i: number) => void
   paginationControl: HTMLElement
 }) {
@@ -345,7 +347,6 @@ export async function logout() {
 
     window.location.href = '/'
   } catch (error) {
-    console.error('Logout failed:', error)
     throw error
   }
 }

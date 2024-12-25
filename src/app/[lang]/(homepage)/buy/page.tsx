@@ -5,10 +5,7 @@ import Banner from '@/Section/Homepage/Banner/page'
 import {cookies} from 'next/headers'
 import React from 'react'
 
-export default async function BuyPage({searchParams, params}: any) {
-  const t = await getDictionary(params.lang)
-  const {viewport} = searchParams
-  const {lang} = params
+export default async function BuyPage() {
   const cookieStore = cookies()
   const token = cookieStore.get('token')
   const [carList] = await Promise.all([

@@ -17,9 +17,8 @@ import {
   renderPagination,
   toQueryString,
 } from '@/lib/utils'
-import {ChevronDown, X} from 'lucide-react'
+import {ChevronDown} from 'lucide-react'
 import React, {useContext, useEffect, useRef, useState} from 'react'
-import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
 
 export default function CarList({carList}: any) {
@@ -48,7 +47,6 @@ export default function CarList({carList}: any) {
     }))
   }, 500)
   useEffect(() => {
-    console.log(carList)
     if (pagination.current)
       renderPagination({
         totalPages: carList?.totalPage || 10,
@@ -61,7 +59,7 @@ export default function CarList({carList}: any) {
         },
         paginationControl: pagination.current,
       })
-  }, [filterParams.page])
+  }, [carList, filterParams.page])
 
   const {data, trigger} = useSWRMutation(
     filterParams && `${env.API}/car?${toQueryString(filterParams)}`,
@@ -76,12 +74,11 @@ export default function CarList({carList}: any) {
 
   useEffect(() => {
     trigger()
-  }, [filterParams])
+  }, [filterParams, trigger])
 
   useEffect(() => {
     if (data?.data?.items) setUserCarList(data?.data?.items)
   }, [data])
-console.log(userCarList)
   return (
     <>
       {openModal === 'ADD_CAR' && (

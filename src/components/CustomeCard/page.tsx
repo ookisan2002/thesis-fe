@@ -22,7 +22,6 @@ export function CustomeCarCard({
   getDetail,
   ...props
 }: CustomeCardProps) {
-  console.log(key)
   return (
     <div
       key={key}

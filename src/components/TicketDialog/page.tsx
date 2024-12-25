@@ -21,8 +21,6 @@ import {
 } from '@/lib/utils'
 import {AccountContext, AccountContextType} from '../ContextProvider/page'
 import {env} from '@/lib/environment'
-import {da} from 'date-fns/locale'
-import {set} from 'date-fns'
 
 export type Ticket = {
   id: string
@@ -149,7 +147,7 @@ export default function TicketDialog({children}: {children: React.ReactNode}) {
     dateRange: undefined,
   })
 
-  const {data, isLoading} = useSWR(
+  const {data} = useSWR(
     value.token
       ? `${env.API}/ticket/user?${toQueryString({
           code: filterParams.code,

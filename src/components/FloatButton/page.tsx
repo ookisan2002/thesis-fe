@@ -6,7 +6,6 @@ import {AccountContext, AccountContextType} from '../ContextProvider/page'
 import './styles.css'
 import TicketDialog from '../TicketDialog/page'
 import CarDialog from '../CarDialog/page'
-import Link from 'next/link'
 import { LogOut } from 'lucide-react'
 import { logout } from '@/lib/utils'
 
@@ -35,7 +34,7 @@ export default function FloatButton() {
     return () => {
       window.removeEventListener('scroll', handleScroll)
     }
-  },[])
+  }, [])
 
   const scrollToTop = () => {
     window.scrollTo({
@@ -80,7 +79,7 @@ export default function FloatButton() {
               type='checkbox'
             />
             <div className='extended_btn rounded-full grid grid-cols-1 items-center bg-white shadow-[0px_4.171px_31.283px_0px_rgba(172,172,172,0.25)] p-1 relative group'>
-              <div onClick={()=>logout()} className='cursor-pointer size-[2.75rem] flex justify-center items-center relative z-[1] peer/item1 group/item1 text-black transition-all duration-500 hover:text-white'>
+              <div onClick={() => logout()} className='cursor-pointer size-[2.75rem] flex justify-center items-center relative z-[1] peer/item1 group/item1 text-black transition-all duration-500 hover:text-white'>
                 <LogOut className='size-[1.75rem] flex justify-center [&_*]:stroke-[#1C274C] items-center group-hover/item1:[&_*]:stroke-white transition-all duration-500'/>
               </div>
               <div className='cursor-pointer size-[2.75rem] flex justify-center items-center relative z-[1] peer/item2 group/item2'>
@@ -131,7 +130,7 @@ export default function FloatButton() {
                   </svg>
                 </CarDialog>
               </div>
-              <div className='cursor-pointer size-[2.75rem] flex justify-center items-center relative z-[1] peer/item4 group/item3'>
+              {/* <div className='cursor-pointer size-[2.75rem] flex justify-center items-center relative z-[1] peer/item4 group/item3'>
                 <svg
                   width='800px'
                   height='800px'
@@ -171,7 +170,7 @@ export default function FloatButton() {
                     stroke-linejoin='round'
                   />
                 </svg>
-              </div>
+              </div> */}
               <div className='bg-primary rounded-full absolute top-1 left-1 size-[2.75rem] opacity-0 transition-all duration-500 group-hover:opacity-100 peer-hover/item1:top-1 peer-hover/item2:top-12  peer-hover/item3:top-[5.75rem] peer-hover/item4:top-[8.5rem]'></div>
             </div>
             <label

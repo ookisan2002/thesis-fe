@@ -11,11 +11,8 @@ import {
 } from '@/components/ui/select'
 import Image from 'next/image'
 import React, {
-  use,
-  useCallback,
   useContext,
   useEffect,
-  useRef,
   useState,
 } from 'react'
 import {toast} from 'sonner'
@@ -98,7 +95,7 @@ export default function BuySection({carList}: any) {
         })
       }
     }
-  }, [])
+  }, [queryParams])
 
   useEffect(() => {
     if (data) {
@@ -109,7 +106,7 @@ export default function BuySection({carList}: any) {
         },
       })
     }
-    if(data?.data?.url) {
+    if (data?.data?.url) {
       window.location.href = data.data.url
     }
   }, [data])
@@ -255,7 +252,7 @@ export default function BuySection({carList}: any) {
                 : 'Thanh toán thất bại'}
             </DialogTitle>
             <DialogDescription>
-            {queryParams.vnp_TransactionStatus === '00' &&
+              {queryParams.vnp_TransactionStatus === '00' &&
               queryParams.vnp_ResponseCode === '00'
                 ? 'Vào vé của bạn để xem thông tin chi tiết.'
                 : 'Thanh toán thất bại. Vui lòng thử lại hoặc liên hệ hỗ trợ khách hàng nếu vấn đề vẫn tiếp diễn.'}

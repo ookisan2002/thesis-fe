@@ -2,11 +2,10 @@
 
 import { AccountContext, AccountContextType } from '@/components/ContextProvider/page'
 import Widget from '@/components/Widget/page'
-import { env } from '@/lib/environment'
 import CarParkHistoryTable from '@/Section/AdminPage/CarParkPage/CarParkHistory/page'
 import CarParkInforTable from '@/Section/AdminPage/CarParkPage/CarParkInforTable/page'
 import {CircleParking, CircleParkingOff} from 'lucide-react'
-import React, {useContext, useEffect} from 'react'
+import React, {useContext} from 'react'
 
 export default function CarParkPage() {
   const context = useContext(AccountContext)

@@ -1,6 +1,6 @@
 'use client'
 
-import React, {useContext, useEffect, useRef, useState} from 'react'
+import React, {useCallback, useContext, useEffect, useRef, useState} from 'react'
 import {
   Dialog,
   DialogContent,
@@ -23,7 +23,6 @@ import {zodResolver} from '@hookform/resolvers/zod'
 import {useForm} from 'react-hook-form'
 import {signInFormSchema, signUpFormSchema} from '@/lib/Schemas'
 import {z} from 'zod'
-import useSWR, {mutate} from 'swr'
 import {env} from '@/lib/environment'
 import {postFetcher} from '@/lib/utils'
 import {AccountContext, AccountContextType} from '../ContextProvider/page'
@@ -63,7 +62,7 @@ export default function LogForm({children}: {children: React.ReactNode}) {
   const context = useContext(AccountContext)
   const {setValue}: AccountContextType = context
 
-  const fetchToken = async (data: any) => {
+  const fetchToken = useCallback(async (data: any) => {
     await fetch('/api/auth', {
       method: 'POST',
       body: JSON.stringify(data),
@@ -91,7 +90,7 @@ export default function LogForm({children}: {children: React.ReactNode}) {
       token: data?.token,
       admin: data?.user?.admin,
     }))
-  }
+  }, [setValue])
 
   useEffect(() => {
     if (data) {
@@ -103,7 +102,7 @@ export default function LogForm({children}: {children: React.ReactNode}) {
       })
       if (data.status) fetchToken(data?.data)
     }
-  }, [data])
+  }, [data, fetchToken])
   return (
     <Dialog>
       <DialogTrigger

@@ -47,7 +47,7 @@ export default function CarParkHistoryTable() {
   const context = useContext(AccountContext)
   const {value}: AccountContextType = context
 
-  const {data, trigger, isMutating} = useSWRMutation(
+  const {data, trigger} = useSWRMutation(
     `${env.API}/action-history?${toQueryString({
       code: filterParams.code,
       action: filterParams.action,
@@ -85,7 +85,7 @@ export default function CarParkHistoryTable() {
       trigger()
     }, 300)
     return () => clearTimeout(debouncedTrigger)
-  }, [filterParams])
+  }, [filterParams, trigger])
 
   return (
     <div className='flex flex-col items-end'>

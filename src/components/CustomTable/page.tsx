@@ -5,7 +5,7 @@ import {renderPagination} from '@/lib/utils'
 
 export interface rowProps {
   content: any
-  rowRender: (obj: any) => any
+  rowRender: () => any
 }
 
 export default function CustomTable({
@@ -32,7 +32,7 @@ export default function CustomTable({
         },
         paginationControl: carPagination.current,
       })
-  }, [currentPage])
+  }, [currentPage, setCurrentPage, totalPage])
   return (
     <div className='flex flex-col'>
       <div className='overflow-x-auto shadow-md sm:rounded-lg'>

@@ -7,17 +7,16 @@ import {CustomeTicketCard} from '@/components/CustomeCard/page'
 import {Button} from '@/components/ui/button'
 import {Calendar} from '@/components/ui/calendar'
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover'
-import {carFilterParams, ticketFilterParams} from '@/lib/constants'
+import {ticketFilterParams} from '@/lib/constants'
 import {env} from '@/lib/environment'
 import {
-  debounce,
   formatDate,
   formatDateToTimeStamp,
   getFetcher,
   renderPagination,
   toQueryString,
 } from '@/lib/utils'
-import { format} from 'date-fns'
+import {format} from 'date-fns'
 import {CalendarIcon} from 'lucide-react'
 import React, {useContext, useEffect, useRef, useState} from 'react'
 import {DateRange} from 'react-day-picker'
@@ -39,7 +38,7 @@ export default function TicketTableSection({ticketList}: any) {
     },
   })
 
-  const {data, trigger, isMutating} = useSWRMutation(
+  const {data, trigger} = useSWRMutation(
     `${env.API}/ticket?${toQueryString({
       code: filterParams.code,
       email: filterParams.email,
@@ -74,12 +73,14 @@ export default function TicketTableSection({ticketList}: any) {
         },
         paginationControl: pagination.current,
       })
-  }, [filterParams.page])
+  }, [filterParams.page, ticketList?.totalPage])
 
   useEffect(() => {
-    const debouncedTrigger = setTimeout(() => {trigger()}, 300)
+    const debouncedTrigger = setTimeout(() => {
+      trigger()
+    }, 300)
     return () => clearTimeout(debouncedTrigger)
-  }, [filterParams])
+  }, [filterParams, trigger])
 
   return (
     <section className='w-full'>
@@ -177,7 +178,7 @@ export default function TicketTableSection({ticketList}: any) {
         </div>
       </div>
       <div className='grid grid-cols-3 gap-2 tablet:gap-6 xsm:grid-cols-1 tablet:grid-cols-2'>
-        {userCarList?.map((it:any) => (
+        {userCarList?.map((it: any) => (
           <CustomeTicketCard
             title={it?.car?.code}
             desRow1={`Giá: ${(it?.price || 0).toLocaleString('vi-VN', {

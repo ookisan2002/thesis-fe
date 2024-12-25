@@ -2,41 +2,22 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import React, {useCallback, useContext} from 'react'
+import React, {useCallback, useContext, useEffect} from 'react'
 import {
   AlignJustify,
   Car,
-  Cloud,
-  CreditCard,
-  Github,
   House,
-  Keyboard,
-  LifeBuoy,
   LogOut,
-  Mail,
-  MessageSquare,
-  Plus,
-  PlusCircle,
-  Settings,
   SquareParking,
   TicketCheck,
-  User,
-  UserPlus,
-  Users,
 } from 'lucide-react'
 import {usePathname} from 'next/navigation'
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import {
@@ -54,6 +35,11 @@ export default function AdminSideBar() {
     },
     [pathname],
   )
+  useEffect(() => {
+    if (!value || !value?.admin) {
+      window.location.href = '/'
+    }
+  }, [value])
   return (
     <>
       <label htmlFor='admin_nav' className='lg:hidden fixed top-16 right-16 backdrop-blur-xl p-4 xsm:p-2 rounded-full xsm:top-[1rem] xsm:right-[1rem] z-50'>

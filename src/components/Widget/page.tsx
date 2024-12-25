@@ -1,5 +1,4 @@
 import Card from '@/components/Card/page'
-import { number } from 'zod'
 
 const Widget = (props: {
   icon: JSX.Element

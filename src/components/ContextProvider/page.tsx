@@ -10,12 +10,8 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from '@/components/ui/dialog'
-import {Label} from '@/components/ui/label'
 import {Button} from '@/components/ui/button'
-import Link from 'next/link'
-import {useRouter} from 'next/router'
 
 export interface AccountType {
   fullname: string
@@ -108,31 +104,28 @@ const ContaxtProvider = ({
         admin: data?.data?.admin || '',
       }))
     }
-  }, [data])
+  }, [data, initialToken])
 
   useEffect(() => {
     let url = `${env.API}/ws/info`
     let ws = new WebSocket(url)
     ws.onopen = function () {
-      console.log('Kết nối thành công')
       ws.send('getInfo')
     }
 
     ws.onmessage = async function (msg) {
       const res = await JSON.parse(msg.data)
-      console.log(res)
       setValue((prevParams) => ({
         ...prevParams,
         parkInfor: res,
       }))
     }
 
-    ws.onclose = function () {
-      console.log('Kết nối bị đóng')
-    }
+    // ws.onclose = function () {
+    // }
 
     ws.onerror = function (err) {
-      console.log('Có lỗi xảy ra: ', err)
+      throw err
     }
   }, [])
 
@@ -174,7 +167,7 @@ const ContaxtProvider = ({
     setTokenTimeout()
 
     return () => clearTimeout(timeoutId)
-  }, [value])
+  }, [initialToken, value])
   const handleLogout = () => {
     setOpen(false)
     logout()

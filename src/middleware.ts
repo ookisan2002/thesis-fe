@@ -1,8 +1,5 @@
 import {NextResponse, userAgent} from 'next/server'
 import type {NextRequest} from 'next/server'
-import {toast} from 'sonner'
-import {cookies} from 'next/headers'
-import {ToastAction} from '@/components/ui/toast'
 
 const defaultLocale = 'en'
 let locales = ['en', 'fr', 'it']

@@ -31,7 +31,7 @@ import {AccountContext, AccountContextType} from '../ContextProvider/page'
 export default function UserForm({children}: {children: React.ReactNode}) {
   const [formData, setFormData] = useState<FormData | null>(null)
   const [signIn, setSignIn] = useState<boolean>(true)
-  const dialogTrigger = useRef<HTMLElement | null>(null)
+  const dialogTrigger = useRef<HTMLButtonElement | null>(null)
   const formSignUp = useForm<z.infer<typeof signUpFormSchema>>({
     resolver: zodResolver(signUpFormSchema),
     defaultValues: {
@@ -69,15 +69,20 @@ export default function UserForm({children}: {children: React.ReactNode}) {
     if (data) {
       dialogTrigger.current?.click()
 
-      setValue({
-        fullname: data?.data?.user?.fullname,
-        email: data?.data?.user?.email,
-        address: data?.data?.user?.address,
-        phoneNumber: data?.data?.user?.phoneNumber,
-        dateOfBirth: data?.data?.user?.dateOfBirth,
+      setValue((prev) => {
+        return {
+          ...prev,
+          token: data?.data?.token,
+          admin: data?.data?.admin,
+          fullname: data?.data?.user?.fullname,
+          email: data?.data?.user?.email,
+          address: data?.data?.user?.address,
+          phoneNumber: data?.data?.user?.phoneNumber,
+          dateOfBirth: data?.data?.user?.dateOfBirth,
+        }
       })
     }
-  }, [data])
+  }, [data, setValue])
   return (
     <Dialog>
       <DialogTrigger

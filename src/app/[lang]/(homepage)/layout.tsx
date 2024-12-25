@@ -4,7 +4,6 @@ import Header from '@/components/Header/page'
 import {ReactNode} from 'react'
 
 export default async function layout({
-  params,
   children,
 }: {
   params: {lang: string}
