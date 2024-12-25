@@ -1,4 +1,3 @@
-import getDictionary from '@/app/dictionaries'
 import getData from '@/lib/getData'
 import BuySection from '@/Section/BuyPage/page'
 import Banner from '@/Section/Homepage/Banner/page'
