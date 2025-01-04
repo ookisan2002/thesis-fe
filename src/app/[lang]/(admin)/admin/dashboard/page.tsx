@@ -149,11 +149,11 @@ export default async function AdminDashboardPage() {
       </div>
       <div className='mt-5 grid grid-cols-2 xsm:grid-cols-1 gap-5'>
         <TotalSpent
-          lineChartDataTotalSpent={lineChartDataTotalSpent}
+          lineChartDataTotalSpent={lineChartDataTotalSpent.reverse()}
           lineChartOptionsTotalSpent={lineChartOptionsTotalSpent}
         />
         <TicketQuantityRevenue
-          barChartDataTicketQuantityRevenue={barChartDataTicketQuantityRevenue}
+          barChartDataTicketQuantityRevenue={barChartDataTicketQuantityRevenue.reverse()}
           barChartOptionsRevenue={barChartOptionsRevenue}
         />
       </div>
