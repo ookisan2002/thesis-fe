@@ -70,32 +70,32 @@ export default function BuySection({carList}: any) {
 
   useEffect(() => {
     if (Object.values(queryParams).length !== 0) {
-      const responseCode = queryParams.vnp_ResponseCode
-      const transactionStatus = queryParams.vnp_TransactionStatus
+      // const responseCode = queryParams.vnp_ResponseCode
+      // const transactionStatus = queryParams.vnp_TransactionStatus
       setOpenDialog(true)
-      if (responseCode === '00' && transactionStatus === '00') {
-        toast('Đặt vé thành công', {
-          classNames: {
-            toast: 'bg-green-500',
-            title: 'text-white',
-          },
-        })
-        toast('Chọn xe bạn muốn mua vé', {
-          classNames: {
-            toast: 'bg-red-500',
-            title: 'text-white',
-          },
-        })
-      } else {
-        toast('Đặt vé thất bại', {
-          classNames: {
-            toast: 'bg-red-500',
-            title: 'text-white',
-          },
-        })
-      }
+      // if (responseCode === '00' && transactionStatus === '00') {
+      //   toast('Đặt vé thành công', {
+      //     classNames: {
+      //       toast: 'bg-green-500',
+      //       title: 'text-white',
+      //     },
+      //   })
+      //   toast('Chọn xe bạn muốn mua vé', {
+      //     classNames: {
+      //       toast: 'bg-red-500',
+      //       title: 'text-white',
+      //     },
+      //   })
+      // } else {
+      //   toast('Đặt vé thất bại', {
+      //     classNames: {
+      //       toast: 'bg-red-500',
+      //       title: 'text-white',
+      //     },
+      //   })
+      // }
     }
-  }, [queryParams])
+  }, [])
 
   useEffect(() => {
     if (data) {
