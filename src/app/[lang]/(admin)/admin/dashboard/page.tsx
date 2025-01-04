@@ -86,7 +86,7 @@ export default async function AdminDashboardPage() {
     (item: any, i: number) => {
       return {
         name: item?.ticketName,
-        data: revenue?.data[0]?.incomeList.map((income: any) => income?.total),
+        data: revenue?.data[i]?.incomeList.map((income: any) => income?.total),
         color: `#${i}AD2Fa`,
       }
     },
@@ -95,7 +95,7 @@ export default async function AdminDashboardPage() {
   const lineChartDataTotalSpent = revenue?.data?.map((item: any, i: number) => {
     return {
       name: item?.ticketName,
-      data: revenue?.data[0]?.incomeList.map(
+      data: revenue?.data[i]?.incomeList.map(
         (income: any) => income?.totalIncome,
       ),
       color: `#${i}AD2Fa`,

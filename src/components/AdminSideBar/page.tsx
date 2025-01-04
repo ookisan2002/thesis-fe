@@ -24,6 +24,7 @@ import {
   AccountContext,
   AccountContextType,
 } from '@/components/ContextProvider/page'
+import { logout } from '@/lib/utils'
 
 export default function AdminSideBar() {
   const pathname = usePathname()
@@ -202,7 +203,7 @@ export default function AdminSideBar() {
                 My Account
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={() => logout()}>
                 <LogOut className='tablet:!size-9' />
                 <span className='tablet:text-[2.5rem]'>Log out</span>
               </DropdownMenuItem>
