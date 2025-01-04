@@ -87,7 +87,7 @@ export default async function AdminDashboardPage() {
       return {
         name: item?.ticketName,
         data: revenue?.data[i]?.incomeList.map((income: any) => income?.total),
-        color: `#${i}AD2Fa`,
+        color: `#${i}${i}${i}${i}${i}${i}`,
       }
     },
   )
@@ -98,7 +98,7 @@ export default async function AdminDashboardPage() {
       data: revenue?.data[i]?.incomeList.map(
         (income: any) => income?.totalIncome,
       ),
-      color: `#${i}AD2Fa`,
+      color: `#${i}${i}${i}${i}${i}${i}`,
     }
   })
 
