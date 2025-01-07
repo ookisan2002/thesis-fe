@@ -63,7 +63,7 @@ export default function TicketTableSection({ticketList}: any) {
   useEffect(() => {
     if (pagination.current)
       renderPagination({
-        totalPages: ticketList?.totalPage || 10,
+        totalPages: data?.data?.totalPage || ticketList?.totalPage || 1,
         currentPage: filterParams.page,
         setCurrentPage: (i: number) => {
           setFilterParams((prevParams) => ({
