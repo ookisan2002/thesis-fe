@@ -58,7 +58,7 @@ export default function CarParkInforTable() {
   useEffect(() => {
     if (pagination.current)
       renderPagination({
-        totalPages: data?.data?.totalPage || 10,
+        totalPages: data?.data?.totalPage || 1,
         currentPage: data?.data?.currentPage || 1,
         setCurrentPage: (i: number) => {
           setFilterParams((prevParams) => ({
