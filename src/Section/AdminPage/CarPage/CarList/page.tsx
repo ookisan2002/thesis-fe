@@ -19,6 +19,7 @@ import {
 } from '@/lib/utils'
 import {ChevronDown} from 'lucide-react'
 import React, {useContext, useEffect, useRef, useState} from 'react'
+import useSWR from 'swr'
 import useSWRMutation from 'swr/mutation'
 
 export default function CarList({carList}: any) {
@@ -61,7 +62,7 @@ export default function CarList({carList}: any) {
       })
   }, [carList, filterParams.page])
 
-  const {data, trigger} = useSWRMutation(
+  const {data} = useSWR(
     filterParams && `${env.API}/car?${toQueryString(filterParams)}`,
     (url: string) =>
       getFetcher({
@@ -70,11 +71,12 @@ export default function CarList({carList}: any) {
           Authorization: `Bearer ${value.token}`,
         },
       }),
+      {
+        refreshInterval: 1000,
+        revalidateOnFocus: true,
+        dedupingInterval: 1000,
+      }
   )
-
-  useEffect(() => {
-    trigger()
-  }, [filterParams, trigger])
 
   useEffect(() => {
     if (data?.data?.items) setUserCarList(data?.data?.items)
@@ -85,24 +87,24 @@ export default function CarList({carList}: any) {
         <AdminAddCarDialog closeModal={setOpenModal} />
       )}
       {openModal !== 'ADD_CAR' && openModal.length > 0 && (
-            <div className='bg-[#64748b4d] fixed top-0 left-0 w-[100vw] h-[100vh] z-50 flex justify-center items-center'>
-            <Card extra='p-6 relative'>
-              {/* <X
+        <div className='bg-[#64748b4d] fixed top-0 left-0 w-[100vw] h-[100vh] z-50 flex justify-center items-center'>
+          <Card extra='p-6 relative'>
+            {/* <X
                 className='h-4 w-4 absolute top-6 right-6 cursor-pointer'
                 onClick={() => setOpenModal('')}
               /> */}
-              <h4 className='text-lg font-semibold leading-none tracking-tight'>
-                Chi tiết hoạt động của xe
-              </h4>
-              <p className='text-sm text-muted-foreground mb-4'>
-                Xem thông tin ra vào bãi của xe đã đăng kí
-              </p>
-              <CarActionHistoryTable
-                carInforId={openModal}
-                setCarInforId={setOpenModal}
-              />
-            </Card>
-          </div>
+            <h4 className='text-lg font-semibold leading-none tracking-tight'>
+              Chi tiết hoạt động của xe
+            </h4>
+            <p className='text-sm text-muted-foreground mb-4'>
+              Xem thông tin ra vào bãi của xe đã đăng kí
+            </p>
+            <CarActionHistoryTable
+              carInforId={openModal}
+              setCarInforId={setOpenModal}
+            />
+          </Card>
+        </div>
       )}
       <section className='col-span-2 xsm:col-span-3'>
         <div className='flex my-[2.5rem] flex-wrap'>
